@@ -262,6 +262,7 @@ def get_losses(d_out_real, d_out_fake, x_real_onehot, x_fake_onehot_appr, gen_o,
     else:
         raise NotImplementedError("Divergence '%s' is not implemented" % gan_type)
 
+    print(gen_o, EPS)
     log_pg = tf.reduce_mean(tf.log(gen_o + EPS))  # [1], measures the log p_g(x)
 
     return log_pg, g_loss, d_loss
