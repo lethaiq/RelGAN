@@ -27,6 +27,7 @@ parser.add_argument('--npre-epochs', default=150, type=int, help='Number of step
 parser.add_argument('--nadv-steps', default=5000, type=int, help='Number of steps to run adversarial training')
 parser.add_argument('--ntest', default=50, type=int, help='How often to run tests')
 parser.add_argument('--d-lr', default=1e-4, type=float, help='Learning rate for the discriminator')
+parser.add_argument('--f-lr', default=1e-3, type=float, help='Learning rate for the f classifier')
 parser.add_argument('--gpre-lr', default=1e-2, type=float, help='Learning rate for the generator in pre-training')
 parser.add_argument('--gadv-lr', default=1e-4, type=float, help='Learning rate for the generator in adv-training')
 parser.add_argument('--batch-size', default=64, type=int, help='Batch size for training')

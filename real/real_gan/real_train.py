@@ -64,6 +64,8 @@ def real_train(generator, discriminator, f_classifier, oracle_loader, config):
 
     # classifier f outputs
     f_out_real = f_classifier(x_onehot=x_real_onehot)
+    f_loss = get_cross_entropy_loss(f_out_real, x_real_label)
+    f_train_op = get_train_ops_classifier(config, f_loss, global_step)
 
     # GAN / Divergence type
     log_pg, g_loss, d_loss = get_losses(d_out_real, d_out_fake, x_real_onehot, x_fake_onehot_appr,
@@ -113,6 +115,11 @@ def real_train(generator, discriminator, f_classifier, oracle_loader, config):
 
         metrics = get_metrics(config, oracle_loader, test_file, gen_text_file, g_pretrain_loss, x_real, sess)
 
+
+        print('Start F-training...')
+        
+        
+        
         print('Start pre-training...')
         progress = tqdm(range(npre_epochs))
         for epoch in progress:
@@ -197,6 +204,11 @@ def real_train(generator, discriminator, f_classifier, oracle_loader, config):
                 # save the model
                 saver.save(sess, os.path.join(log_dir, 'ckpt', dataset + '.adv_model'), global_step=global_step)
 
+def get_cross_entropy_loss(logits, y):
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+            logits=logits, labels=y))
+    return loss
+
 
 # A function to get different GAN losses
 def get_losses(d_out_real, d_out_fake, x_real_onehot, x_fake_onehot_appr, gen_o, discriminator, config):
@@ -278,6 +290,18 @@ def get_losses(d_out_real, d_out_fake, x_real_onehot, x_fake_onehot_appr, gen_o,
 
     return log_pg, g_loss, d_loss
 
+
+def get_train_ops_classifier(config, clf_loss, global_step, prefix='f'):
+    optimizer_name = config['optimizer']
+    clf_lr = config['{}_lr'.format(prefix)]
+    clf_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='{}_classifier'.format(prefix))
+
+    grad_clip = 5.0
+    clf_opt = tf.train.AdamOptimizer(gpre_lr, beta1=0.9, beta2=0.999)
+    clf_grads, _ = tf.clip_by_global_norm(tf.gradients(clf_loss, clf_vars), grad_clip)
+    clf_train_op = g_optimizer.apply_gradients(zip(clf_grads, clf_vars))
+
+    return clf_train_op
 
 # A function to calculate the gradients and get training operations
 def get_train_ops(config, g_pretrain_loss, g_loss, d_loss, log_pg, temperature, global_step):
