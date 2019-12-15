@@ -15,6 +15,7 @@ parser.add_argument('--gf-dim', default=64, type=int, help='Number of filters to
 parser.add_argument('--df-dim', default=64, type=int, help='Number of filters to use for discriminator')
 parser.add_argument('--g-architecture', default='rmc_att', type=str, help='Architecture for generator')
 parser.add_argument('--d-architecture', default='rmc_att', type=str, help='Architecture for discriminator')
+parser.add_argument('--f-architecture', default='lstm_vanilla', type=str, help='Architecture for f classifier')
 parser.add_argument('--gan-type', default='standard', type=str, help='Which type of GAN to use')
 parser.add_argument('--hidden-dim', default=32, type=int, help='only used for OrcaleLstm and lstm_vanilla (generator)')
 parser.add_argument('--sn', default=False, action='store_true', help='if using spectral norm')
@@ -57,6 +58,7 @@ parser.add_argument('--seq-len', default=20, type=int, help="sequence length: [2
 parser.add_argument('--num-sentences', default=10000, type=int, help="number of total sentences")
 parser.add_argument('--gen-emb-dim', default=32, type=int, help="generator embedding dimension")
 parser.add_argument('--dis-emb-dim', default=64, type=int, help="TOTAL discriminator embedding dimension")
+parser.add_argument('--f-emb-dim', default=64, type=int, help="TOTAL F classifier embedding dimension")
 parser.add_argument('--num-rep', default=64, type=int, help="number of discriminator embedded representations")
 parser.add_argument('--data-dir', default='./data', type=str, help='Where data data is stored')
 
@@ -99,7 +101,10 @@ def main():
         discriminator = models.get_discriminator(args.d_architecture, batch_size=args.batch_size, seq_len=seq_len,
                                                  vocab_size=vocab_size, dis_emb_dim=args.dis_emb_dim,
                                                  num_rep=args.num_rep, sn=args.sn)
-        real_train(generator, discriminator, oracle_loader, config)
+        f_classifier = models.get_classifier(args.f_architecture, scope="f_classifier", batch_size=args.batch_size, seq_len=seq_len,
+                                                 vocab_size=vocab_size, dis_emb_dim=args.f_emb_dim,
+                                                 num_rep=args.num_rep, sn=args.sn)
+        real_train(generator, discriminator, f_classifier, oracle_loader, config)
 
     else:
         raise NotImplementedError('{}: unknown dataset!'.format(args.dataset))

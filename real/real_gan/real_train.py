@@ -13,7 +13,7 @@ EPS = 1e-10
 
 
 # A function to initiate the graph and train the networks
-def real_train(generator, discriminator, oracle_loader, config):
+def real_train(generator, discriminator, f_classifier, oracle_loader, config):
     batch_size = config['batch_size']
     num_sentences = config['num_sentences']
     vocab_size = config['vocab_size']
@@ -50,6 +50,7 @@ def real_train(generator, discriminator, oracle_loader, config):
 
     # placeholder definitions
     x_real = tf.placeholder(tf.int32, [batch_size, seq_len], name="x_real")  # tokens of oracle sequences
+    x_real_label = tf.placeholder(tf.int32, [batch_size], name="x_real_label")
 
     temperature = tf.Variable(1., trainable=False, name='temperature')
 
@@ -60,6 +61,9 @@ def real_train(generator, discriminator, oracle_loader, config):
     x_fake_onehot_appr, x_fake, g_pretrain_loss, gen_o = generator(x_real=x_real, temperature=temperature)
     d_out_real = discriminator(x_onehot=x_real_onehot)
     d_out_fake = discriminator(x_onehot=x_fake_onehot_appr)
+
+    # classifier f outputs
+    f_out_real = f_classifier(x_onehot=x_real_onehot)
 
     # GAN / Divergence type
     log_pg, g_loss, d_loss = get_losses(d_out_real, d_out_fake, x_real_onehot, x_fake_onehot_appr,

@@ -136,6 +136,8 @@ def discriminator(x_onehot, batch_size, seq_len, vocab_size, dis_emb_dim, num_re
     logits = linear(fc_out, output_size=1, use_bias=True, sn=sn, scope='logits')
     logits = tf.squeeze(logits, -1)  # batch_size*num_rep
 
+    print("shape of D logits: {}".format(logits.get_shape().as_list()))
+
     return logits
 
 
