@@ -114,6 +114,7 @@ def real_train(generator, discriminator, oracle_loader, config):
         for epoch in progress:
             # pre-training
             g_pretrain_loss_np = pre_train_epoch(sess, g_pretrain_op, g_pretrain_loss, x_real, oracle_loader)
+            print('DONE')
             progress.set_description('g_loss (MLE): %4.4f' % (g_pretrain_loss_np))
 
             # Test
