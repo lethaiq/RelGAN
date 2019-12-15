@@ -302,13 +302,13 @@ def get_train_ops(config, g_pretrain_loss, g_loss, d_loss, log_pg, temperature, 
     if optimizer_name == 'adam':
         d_optimizer = tf.train.AdamOptimizer(d_lr, beta1=0.9, beta2=0.999)
         g_optimizer = tf.train.AdamOptimizer(gadv_lr, beta1=0.9, beta2=0.999)
-        temp_optimizer = tf.train.AdamOptimizer(1e-2, beta1=0.9, beta2=0.999)
+        # temp_optimizer = tf.train.AdamOptimizer(1e-2, beta1=0.9, beta2=0.999)
 
     # RMSProp optimizer
     elif optimizer_name == 'rmsprop':
         d_optimizer = tf.train.RMSPropOptimizer(d_lr)
         g_optimizer = tf.train.RMSPropOptimizer(gadv_lr)
-        temp_optimizer = tf.train.RMSPropOptimizer(1e-2)
+        # temp_optimizer = tf.train.RMSPropOptimizer(1e-2)
 
     else:
         raise NotImplementedError
