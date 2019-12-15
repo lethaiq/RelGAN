@@ -54,6 +54,9 @@ def generator(x_real, temperature, vocab_size, batch_size, seq_len, gen_emb_dim,
     gen_x = gen_x.stack()  # seq_len x batch_size
     gen_x = tf.transpose(gen_x, perm=[1, 0])  # batch_size x seq_len
 
+    gen_o = gen_o.stack()
+    gen_o = tf.transpose(gen_o, perm=[1, 0])
+    
     gen_x_onehot_adv = gen_x_onehot_adv.stack()
     gen_x_onehot_adv = tf.transpose(gen_x_onehot_adv, perm=[1, 0, 2])  # batch_size x seq_len x vocab_size
 

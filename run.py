@@ -86,7 +86,7 @@ def main():
     elif args.dataset in ['image_coco', 'emnlp_news']:
         data_file = os.path.join(args.data_dir, '{}.txt'.format(args.dataset))
         seq_len, vocab_size = text_precess(data_file)
-        config['seq_len'] = seq_len
+        config['seq_len'] = seq_len # override the sequence length
         config['vocab_size'] = vocab_size
         print('seq_len: %d, vocab_size: %d' % (seq_len, vocab_size))
 

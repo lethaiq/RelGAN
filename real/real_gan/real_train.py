@@ -110,9 +110,11 @@ def real_train(generator, discriminator, oracle_loader, config):
         metrics = get_metrics(config, oracle_loader, test_file, gen_text_file, g_pretrain_loss, x_real, sess)
 
         print('Start pre-training...')
-        for epoch in range(npre_epochs):
+        progress = tqdm(range(npre_epochs))
+        for epoch in progress:
             # pre-training
             g_pretrain_loss_np = pre_train_epoch(sess, g_pretrain_op, g_pretrain_loss, x_real, oracle_loader)
+            progress.set_description('g_loss (MLE): %4.4f' % (g_pretrain_loss_np))
 
             # Test
             ntest_pre = 10
