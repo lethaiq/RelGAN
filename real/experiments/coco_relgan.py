@@ -47,7 +47,7 @@ decay = False
 adapt = 'exp'
 npre_epochs = '150'
 nadv_steps = '2000'
-ntest = '20'
+ntest = '100'
 
 
 # Paths

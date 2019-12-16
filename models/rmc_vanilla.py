@@ -108,7 +108,10 @@ def discriminator(x_onehot, batch_size, seq_len, vocab_size, dis_emb_dim, num_re
     emb_x_re = tf.matmul(input_x_re, d_embeddings)
     emb_x = tf.reshape(emb_x_re, [batch_size, seq_len, dis_emb_dim])  # batch_size x seq_len x dis_emb_dim
 
-    emb_x_expanded = tf.expand_dims(emb_x, -1)  # batch_size x seq_len x dis_emb_dim x 1
+    emb_x_expanded = tf.expand_dims(emb_x, -1)  # batch_size x seq_len x dis_emb_dim x 1  # N * H * W * C
+    # H is seq_len
+    # W is dis_emb_dim
+    # C is 1
     print('shape of emb_x_expanded: {}'.format(emb_x_expanded.get_shape().as_list()))
 
     # Create a convolution + maxpool layer for each filter size
@@ -116,7 +119,7 @@ def discriminator(x_onehot, batch_size, seq_len, vocab_size, dis_emb_dim, num_re
     for filter_size, num_filter in zip(filter_sizes, num_filters):
         conv = conv2d(emb_x_expanded, num_filter, k_h=filter_size, k_w=emb_dim_single,
                       d_h=1, d_w=emb_dim_single, sn=sn, stddev=None, padding='VALID',
-                      scope="conv-%s" % filter_size)  # batch_size x (seq_len-k_h+1) x num_rep x num_filter
+                      scope="conv-%s" % filter_size)  # batch_size x (seq_len-k_h+1) x num_rep x num_filter # N * H * W * C
         out = tf.nn.relu(conv, name="relu")
         pooled = tf.nn.max_pool(out, ksize=[1, seq_len - filter_size + 1, 1, 1],
                                 strides=[1, 1, 1, 1], padding='VALID',
